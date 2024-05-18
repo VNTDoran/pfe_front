@@ -1,8 +1,17 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import CourseDetails from "./course-details";
+import CourseDetails from "../../components/course-details/course-details";
 import React, { useState, useEffect } from "react";
+import {
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenu,
+} from "@/components/ui/dropdown-menu";
+import Link from "next/link";
 export function Dashboard({
   children,
 }: Readonly<{
@@ -77,7 +86,51 @@ export function Dashboard({
           ))}
         </div>
       </div>
+
       <div>{selectedCourse && <CourseDetails {...selectedCourse} />}</div>
+      <div className="fixed bottom-0 left-0 w-full bg-white dark:bg-gray-950 border-t dark:border-gray-800 p-4 flex justify-between items-center">
+        <div className="flex items-center gap-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="rounded-full" size="icon" variant="ghost">
+                <img
+                  alt="Avatar"
+                  className="rounded-full"
+                  height="32"
+                  src="/placeholder.svg"
+                  style={{
+                    aspectRatio: "32/32",
+                    objectFit: "cover",
+                  }}
+                  width="32"
+                />
+                <span className="sr-only">Toggle user menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Accounting</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link href="#">Settings</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="#">Logout</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            Logged in as John Doe
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <Button size="sm" variant="outline">
+            Upgrade Plan
+          </Button>
+          <Button size="sm" variant="outline">
+            Billing
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

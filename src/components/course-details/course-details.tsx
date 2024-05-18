@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const CourseDetails = ({ title, overview, lessons }) => {
   const renderLessons = () => {
@@ -27,10 +28,10 @@ const CourseDetails = ({ title, overview, lessons }) => {
             <span>{lesson.title}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span>{lesson.duration}</span>
+            {/* <span>{lesson.duration}</span>
             <Button size="sm" variant="outline">
               Start
-            </Button>
+            </Button> */}
           </div>
         </div>
       );
@@ -43,15 +44,21 @@ const CourseDetails = ({ title, overview, lessons }) => {
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">{title}</h2>
         <div className="flex gap-2">
-          <Button size="sm" variant="outline">
-            Preview
-          </Button>
-          <Button size="sm" variant="outline">
-            Enroll
-          </Button>
-          <Button size="sm" variant="outline">
-            Share
-          </Button>
+          <Link href={{ pathname: "/coursecontent", query: { id: "2" } }}>
+            <Button size="sm" variant="outline">
+              Read Course
+            </Button>
+          </Link>
+          <Link href={{ pathname: "/quiz", query: { id: "1" } }}>
+            <Button size="sm" variant="outline">
+              Take Quiz
+            </Button>
+          </Link>
+          <Link href={{ pathname: "/interactiveqanda", query: { id: "1" } }}>
+            <Button size="sm" variant="outline">
+              Start interactive Q&A
+            </Button>
+          </Link>
         </div>
       </div>
       <div className="mt-6 space-y-4">
