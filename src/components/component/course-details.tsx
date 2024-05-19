@@ -1,60 +1,40 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const CourseDetails = ({ title, overview, lessons }) => {
-  const renderLessons = () => {
-    const lessonElements = [];
-    for (let i = 0; i < lessons.length; i++) {
-      const lesson = lessons[i];
-      lessonElements.push(
-        <li key={i} className="flex items-start gap-2">
-          <CheckIcon className="h-5 w-5 flex-shrink-0 text-gray-900 dark:text-gray-50" />
-          <span>
-            {lesson.title} ({lesson.duration})
-          </span>
-        </li>
-      );
-    }
-    return lessonElements;
+const CourseDetails = ({ id, titre, chapters }) => {
+  const renderPods = (pods) => {
+    return pods.map((pod, index) => (
+      <li key={index} className="flex items-start gap-2">
+        <CheckIcon className="h-5 w-5 flex-shrink-0 text-gray-900 dark:text-gray-50" />
+        <span>{pod.title}</span>
+      </li>
+    ));
   };
-  const renderCourseCirc = () => {
-    const coursesElements = [];
-    for (let i = 0; i < lessons.length; i++) {
-      const lesson = lessons[i];
-      coursesElements.push(
-        <div key={i} className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <BookIcon className="h-5 w-5 text-gray-900 dark:text-gray-50" />
-            <span>{lesson.title}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            {/* <span>{lesson.duration}</span>
-            <Button size="sm" variant="outline">
-              Start
-            </Button> */}
-          </div>
-        </div>
-      );
-    }
-    return coursesElements;
+
+  const renderChapters = () => {
+    return chapters.map((chapter) => (
+      <div key={chapter.id} className="pl-4">
+        <h3 className="text-sm font-semibold">{chapter.title}</h3>
+      </div>
+    ));
   };
 
   return (
     <div className="flex-1 p-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">{title}</h2>
-        <div className="flex gap-2">
-          <Link href={{ pathname: "/coursecontent", query: { id: "2" } }}>
+        <h2 className="text-lg font-semibold">{titre}</h2>
+        <div className="mx-2 flex gap-2">
+          <Link href={{ pathname: "/coursecontent", query: { id: id } }}>
             <Button size="sm" variant="outline">
               Read Course
             </Button>
           </Link>
-          <Link href={{ pathname: "/quiz", query: { id: "1" } }}>
+          <Link href={{ pathname: "/quiz", query: { id: id } }}>
             <Button size="sm" variant="outline">
               Take Quiz
             </Button>
           </Link>
-          <Link href={{ pathname: "/interactiveqanda", query: { id: "1" } }}>
+          <Link href={{ pathname: "/interactiveqanda", query: { id: id } }}>
             <Button size="sm" variant="outline">
               Start interactive Q&A
             </Button>
@@ -66,20 +46,14 @@ const CourseDetails = ({ title, overview, lessons }) => {
           <div>
             <h3 className="text-sm font-semibold">Course Overview</h3>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              {overview}
+              Welcome to your course.
             </p>
           </div>
           <div>
             <h3 className="text-sm font-semibold">What You'll Learn</h3>
             <ul className="mt-2 space-y-2 text-sm text-gray-500 dark:text-gray-400">
-              {renderLessons()}
+              {renderChapters()}
             </ul>
-          </div>
-        </div>
-        <div>
-          <h3 className="text-sm font-semibold">Course Curriculum</h3>
-          <div className="mt-2 space-y-2 text-sm text-gray-500 dark:text-gray-400">
-            {renderCourseCirc()}
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-export function InteractiveQandA() {
+export function Quiz() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState(
     new Array(5).fill(null)
@@ -135,4 +135,4 @@ export function InteractiveQandA() {
   );
 }
 
-export default InteractiveQandA;
+export default Quiz;

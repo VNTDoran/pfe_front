@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import CourseDetails from "../../components/course-details/course-details";
+import CourseDetails from "../../components/component/course-details";
 import React, { useState, useEffect } from "react";
 import {
   DropdownMenuTrigger,
@@ -12,82 +12,76 @@ import {
   DropdownMenu,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-export function Dashboard({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+import { fetchCourses } from "@/services/courseService";
+import { AddCourse } from "@/components/component/add-course";
+
+export function Dashboard({ children }) {
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const [showAddCourse, setShowAddCourse] = useState(false);
+  const [courses, setCourses] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function getCourses() {
+      try {
+        const data = await fetchCourses();
+        console.log(data);
+        setCourses(data);
+      } catch (err) {
+        setError(err.message);
+      }
+    }
+    getCourses();
+  }, []);
+
   const handleCourseClick = (course) => {
     setSelectedCourse(course);
+    setShowAddCourse(false);
   };
-  const courses = [
-    {
-      title: "Introduction to Web Development",
-      overview:
-        "Learn the fundamentals of web development with HTML, CSS, and JavaScript.",
-      lessons: [
-        { title: "Introduction to HTML", duration: "30 min" },
-        { title: "Introduction to CSS", duration: "30 min" },
-        { title: "Introduction to JavaScript", duration: "30 min" },
-      ],
-    },
-    {
-      title: "React.js Essentials",
-      overview:
-        "Dive into the world of React.js and learn how to build modern web applications.",
-      lessons: [
-        { title: "Getting Started with React.js", duration: "30 min" },
-        { title: "Components and Props", duration: "30 min" },
-        { title: "State Management", duration: "30 min" },
-      ],
-    },
-    {
-      title: "Advanced TypeScript",
-      overview:
-        "Explore the powerful features of TypeScript and learn how to use it effectively.",
-      lessons: [
-        { title: "Types and Interfaces", duration: "30 min" },
-        { title: "Generics", duration: "30 min" },
-        { title: "Advanced Features", duration: "30 min" },
-      ],
-    },
-  ];
+
+  const handleAddCourseClick = () => {
+    setShowAddCourse(true);
+    setSelectedCourse(null);
+  };
 
   return (
     <div className="flex h-screen w-full">
       <div className="border-r bg-gray-100 p-6 dark:bg-gray-800">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Courses</h2>
-          <Button size="sm" variant="outline">
+          <Button size="sm" variant="outline" onClick={handleAddCourseClick}>
             Add
           </Button>
         </div>
         <div className="mt-6 space-y-2 overflow-y-auto">
+          {error && <p className="text-red-500">{error}</p>}
           {courses.map((course) => (
             <div
-              key={course.title}
+              key={course.titre}
               className="group cursor-pointer rounded-md bg-white p-3 hover:bg-gray-50 dark:bg-gray-950 dark:hover:bg-gray-900"
               onClick={() => handleCourseClick(course)}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <BookIcon className="h-6 w-6 text-gray-900 dark:text-gray-50" />
-                  <span className="font-medium">{course.title}</span>
+                  <span className="font-medium">{course.titre}</span>
                 </div>
-                <Badge className="bg-gray-900/10 text-gray-900 dark:bg-gray-900/20 dark:text-gray-900 dark:bg-gray-50/10 dark:text-gray-50 dark:dark:bg-gray-50/20 dark:dark:text-gray-50">
-                  {course.level}
+                <Badge className="bg-gray-900/10 text-gray-900 dark:bg-gray-900/20 dark:text-gray-900 dark:bg-gray-50/10 dark:text-gray-50 dark:dark:bg-gray-50/20 dark:dark:text-gray-50 mx-2">
+                  Hard
                 </Badge>
               </div>
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                {course.overview}
-              </p>
+              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400"></p>
             </div>
           ))}
         </div>
       </div>
+      {selectedCourse && !showAddCourse && (
+        <CourseDetails {...selectedCourse} />
+      )}
 
-      <div>{selectedCourse && <CourseDetails {...selectedCourse} />}</div>
+      <div className="flex items-center justify-center flex-1">
+        {showAddCourse && <AddCourse />}
+      </div>
       <div className="fixed bottom-0 left-0 w-full bg-white dark:bg-gray-950 border-t dark:border-gray-800 p-4 flex justify-between items-center">
         <div className="flex items-center gap-4">
           <DropdownMenu>
@@ -108,7 +102,7 @@ export function Dashboard({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Accounting</DropdownMenuLabel>
+              <DropdownMenuLabel>Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <Link href="#">Settings</Link>
