@@ -14,11 +14,13 @@ import {
 import Link from "next/link";
 import { fetchCourses } from "@/services/courseService";
 import { AddCourse } from "@/components/component/add-course";
+import Analytics from "@/components/component/an";
 
 export function Dashboard({ children }) {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [showAddCourse, setShowAddCourse] = useState(false);
   const [courses, setCourses] = useState([]);
+  const [showAnalytics, setShowAnalytics] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -35,22 +37,33 @@ export function Dashboard({ children }) {
   }, []);
 
   const handleCourseClick = (course) => {
+    setShowAnalytics(false);
     setSelectedCourse(course);
     setShowAddCourse(false);
   };
 
   const handleAddCourseClick = () => {
+    setShowAnalytics(false);
     setShowAddCourse(true);
+    setSelectedCourse(null);
+  };
+
+  const handleAnalyticsClick = () => {
+    setShowAnalytics(true);
+    setShowAddCourse(false);
     setSelectedCourse(null);
   };
 
   return (
     <div className="flex h-screen w-full">
       <div className="border-r bg-gray-100 p-6 dark:bg-gray-800">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between space-x-5">
           <h2 className="text-lg font-semibold">Courses</h2>
           <Button size="sm" variant="outline" onClick={handleAddCourseClick}>
             Add
+          </Button>
+          <Button size="sm" variant="outline" onClick={handleAnalyticsClick}>
+            Analytics
           </Button>
         </div>
         <div className="mt-6 space-y-2 overflow-y-auto">
@@ -75,12 +88,12 @@ export function Dashboard({ children }) {
           ))}
         </div>
       </div>
-      {selectedCourse && !showAddCourse && (
+      {selectedCourse && !showAddCourse && !showAnalytics && (
         <CourseDetails {...selectedCourse} />
       )}
-
       <div className="flex items-center justify-center flex-1">
         {showAddCourse && <AddCourse />}
+        {showAnalytics && <Analytics />}
       </div>
       <div className="fixed bottom-0 left-0 w-full bg-white dark:bg-gray-950 border-t dark:border-gray-800 p-4 flex justify-between items-center">
         <div className="flex items-center gap-4">

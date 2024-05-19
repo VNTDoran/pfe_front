@@ -1,5 +1,5 @@
 export async function login(loginData) {
-  const response = await fetch("http://localhost:8089/pfe/login", {
+  const response = await fetch("http://localhost:8089/pfe/signin", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -9,7 +9,7 @@ export async function login(loginData) {
   if (!response.ok) {
     throw new Error("Failed to login");
   }
-  return response.json();
+  return response;
 }
 
 export async function signup(SignupData) {
@@ -23,5 +23,5 @@ export async function signup(SignupData) {
   if (!response.ok) {
     throw new Error("Failed to login");
   }
-  return response.json();
+  return response;
 }

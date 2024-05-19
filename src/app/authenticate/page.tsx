@@ -20,17 +20,23 @@ export default function Auth() {
     e.preventDefault();
     try {
       if (mode === "login") {
-        //const response = await login(JSON.stringify({ email, password }));
+        const response = await login({ email, password });
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem("username", email);
+        } else {
+          setError(await response.text());
+        }
       } else {
-        //const response = await signup(JSON.stringify({ email, password }));
+        const response = await signup({ email, password });
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem("username", email);
+        } else {
+          setError(await response.text());
+        }
       }
-      /*if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("token", data.token);
-        // Redirect or do something else after successful login/signup
-      } else {
-        setError(await response.text());
-      }*/
+
       router.push("/dashboard");
     } catch (error) {
       setError("An error occurred");

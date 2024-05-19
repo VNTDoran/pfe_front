@@ -8,6 +8,8 @@ export async function fetchCourses() {
   if (!response.ok) {
     throw new Error("Failed to fetch courses");
   }
+  console.log(response);
+
   return response.json();
 }
 
@@ -37,4 +39,20 @@ export async function insertCourse(courseData) {
     throw new Error("Failed to insert course");
   }
   return response.json();
+}
+
+export async function fetchQuizId(id) {
+  const response = await fetch(
+    `http://localhost:8089/pfe/getQuizs/idTraining/${id}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch course");
+  }
+  return response;
 }
