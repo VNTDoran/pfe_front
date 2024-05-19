@@ -22,6 +22,8 @@ export function AddCourse() {
     competencies: "",
     audience: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCourseData((prevData) => ({
@@ -32,11 +34,13 @@ export function AddCourse() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       await insertCourse(courseData);
     } catch (error) {
       console.error("Failed to save course:", error);
     }
+    setIsLoading(false);
     setCourseData({
       title: "",
       crnp: "",
@@ -108,7 +112,9 @@ export function AddCourse() {
               placeholder="Enter target audience"
             />
           </div>
-          <Button type="submit">Save Course</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? "Saving..." : "Save Course"}
+          </Button>
         </form>
       </CardContent>
     </Card>
