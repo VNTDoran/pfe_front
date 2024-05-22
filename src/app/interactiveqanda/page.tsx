@@ -3,12 +3,17 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { getSession } from "@/services/sessionService";
 
 export default function Component() {
+  const router = useRouter();
+  if (!getSession()) {
+    router.push("/");
+  }
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState(new Array(3).fill(""));
 
-  // Define your list of questions here
   const questions = [
     {
       question: "What is your favorite color?",

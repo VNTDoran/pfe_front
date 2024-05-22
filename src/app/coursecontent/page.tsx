@@ -2,9 +2,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchCoursebyId } from "@/services/courseService";
+import { useRouter } from "next/navigation";
+import { getSession } from "@/services/sessionService";
 const CourseContent = ({ searchParams }) => {
+  const router = useRouter();
+  if (!getSession()) {
+    router.push("/");
+  }
   const id = searchParams.id;
-  console.log(id);
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
 

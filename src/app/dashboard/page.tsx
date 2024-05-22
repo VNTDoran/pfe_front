@@ -15,6 +15,9 @@ import Link from "next/link";
 import { fetchCourses } from "@/services/courseService";
 import { AddCourse } from "@/components/component/add-course";
 import Analytics from "@/components/component/an";
+import { Profile } from "@/components/component/profile";
+import { useRouter } from "next/navigation";
+import { getSession, logout } from "@/services/sessionService";
 
 export function Dashboard({ children }) {
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -22,6 +25,10 @@ export function Dashboard({ children }) {
   const [courses, setCourses] = useState([]);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [error, setError] = useState(null);
+  const router = useRouter();
+  if (!getSession()) {
+    router.push("/");
+  }
 
   useEffect(() => {
     async function getCourses() {
@@ -95,48 +102,8 @@ export function Dashboard({ children }) {
         {showAddCourse && <AddCourse />}
         {showAnalytics && <Analytics />}
       </div>
-      <div className="fixed bottom-0 left-0 w-full bg-white dark:bg-gray-950 border-t dark:border-gray-800 p-4 flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="rounded-full" size="icon" variant="ghost">
-                <img
-                  alt="Avatar"
-                  className="rounded-full"
-                  height="32"
-                  src="/placeholder.svg"
-                  style={{
-                    aspectRatio: "32/32",
-                    objectFit: "cover",
-                  }}
-                  width="32"
-                />
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href="#">Settings</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="#">Logout</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            Logged in as John Doe
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <Button size="sm" variant="outline">
-            Upgrade Plan
-          </Button>
-          <Button size="sm" variant="outline">
-            Billing
-          </Button>
-        </div>
+      <div className="mt-4 mr-3">
+        <Profile />
       </div>
     </div>
   );

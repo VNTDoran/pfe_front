@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/services/authService";
 import { signup } from "@/services/authService";
+import { setSession, logout } from "@/services/sessionService";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -22,16 +23,13 @@ export default function Auth() {
       if (mode === "login") {
         const response = await login({ email, password });
         if (response.ok) {
-          const data = await response.json();
-          localStorage.setItem("username", email);
+          setSession(email);
         } else {
           setError(await response.text());
         }
       } else {
         const response = await signup({ email, password });
         if (response.ok) {
-          const data = await response.json();
-          localStorage.setItem("username", email);
         } else {
           setError(await response.text());
         }

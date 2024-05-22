@@ -21,6 +21,7 @@ export function AddCourse() {
     domain: "",
     competencies: "",
     audience: "",
+    username: localStorage.getItem("username") ?? "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -47,6 +48,7 @@ export function AddCourse() {
       domain: "",
       competencies: "",
       audience: "",
+      username: localStorage.getItem("username") ?? "",
     });
   };
   return (

@@ -2,8 +2,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { fetchQuizId } from "@/services/courseService";
+import { fetchQuizId, saveResultsDB } from "@/services/courseService";
 import { useRouter } from "next/navigation";
+import { getSession } from "@/services/sessionService";
 
 export function Quiz({ searchParams }) {
   const [currentQuiz, setCurrentQuiz] = useState(0);
@@ -14,7 +15,9 @@ export function Quiz({ searchParams }) {
   const [score, setScore] = useState(0);
   const [quizData, setQuizData] = useState([]);
   const router = useRouter();
-
+  if (!getSession()) {
+    router.push("/");
+  }
   useEffect(() => {
     fetchQuizData();
   }, []);
@@ -62,10 +65,16 @@ export function Quiz({ searchParams }) {
     setShowScorePopup(true);
     saveResults(score);
   };
-  const saveResults = (score) => {
-    const results = JSON.parse(localStorage.getItem("quizResults")) || [];
-    results.push({ date: new Date().toISOString(), score });
-    localStorage.setItem("quizResults", JSON.stringify(results));
+  const saveResults = async (score) => {
+    const scoreData = {
+      score: score,
+      email: localStorage.getItem("username"),
+    };
+    try {
+      await saveResultsDB(scoreData);
+    } catch (error) {
+      console.error("Failed to save course:", error);
+    }
   };
 
   const handleClosePopup = () => {
