@@ -63,6 +63,86 @@ export async function fetchQuizId(id) {
   return response;
 }
 
+export async function fetchAssignment(id) {
+  const response = await fetch(
+    `http://localhost:8089/pfe/getAssignment/idTraining/${id}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch course");
+  }
+  console.log(response.text);
+  return response;
+}
+
+export async function getAssignments() {
+  const response = await fetch(`http://localhost:8089/pfe/getAssignments`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch course");
+  }
+  console.log(response.text);
+  return response;
+}
+
+export async function fetchSubmittedAssignments(id) {
+  const response = await fetch(
+    `http://localhost:8089/pfe/getAssignmentsByUser/${id}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch course");
+  }
+  console.log(response.text);
+  return response;
+}
+
+export async function acceptAssignment(id) {
+  const response = await fetch(
+    `http://localhost:8089/pfe/acceptAssignment/${id}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch course");
+  }
+  return response;
+}
+
+export async function rejectAssignment(id) {
+  const response = await fetch(
+    `http://localhost:8089/pfe/rejectAssignment/${id}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch course");
+  }
+  return response;
+}
+
 export async function fetchResults() {
   const email = localStorage.getItem("username");
 

@@ -18,6 +18,7 @@ import Analytics from "@/components/component/an";
 import { Profile } from "@/components/component/profile";
 import { useRouter } from "next/navigation";
 import { getSession, logout } from "@/services/sessionService";
+import SubmittedAssignments from "@/components/component/submitted";
 
 export function Dashboard({ children }) {
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -25,6 +26,15 @@ export function Dashboard({ children }) {
   const [courses, setCourses] = useState([]);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [error, setError] = useState(null);
+  const [showSubmittedAssignments, setShowSubmittedAssignments] =
+    useState(false);
+
+  const handleSubmittedAssignmentsClick = () => {
+    setShowSubmittedAssignments(true);
+    setShowAnalytics(false);
+    setShowAddCourse(false);
+    setSelectedCourse(null);
+  };
   const router = useRouter();
   if (!getSession()) {
     router.push("/");
@@ -47,18 +57,21 @@ export function Dashboard({ children }) {
     setShowAnalytics(false);
     setSelectedCourse(course);
     setShowAddCourse(false);
+    setShowSubmittedAssignments(false);
   };
 
   const handleAddCourseClick = () => {
     setShowAnalytics(false);
     setShowAddCourse(true);
     setSelectedCourse(null);
+    setShowSubmittedAssignments(false);
   };
 
   const handleAnalyticsClick = () => {
     setShowAnalytics(true);
     setShowAddCourse(false);
     setSelectedCourse(null);
+    setShowSubmittedAssignments(false);
   };
 
   return (
@@ -94,10 +107,25 @@ export function Dashboard({ children }) {
             </div>
           ))}
         </div>
+        <div>
+          <Button
+            className="fixed bottom-3 left-10"
+            size="sm"
+            variant="outline"
+            onClick={handleSubmittedAssignmentsClick}
+          >
+            Submitted Assignments
+          </Button>
+        </div>
       </div>
+
       {selectedCourse && !showAddCourse && !showAnalytics && (
         <CourseDetails {...selectedCourse} />
       )}
+      {!selectedCourse &&
+        !showAddCourse &&
+        !showAnalytics &&
+        showSubmittedAssignments && <SubmittedAssignments />}
       <div className="flex items-center justify-center flex-1">
         {showAddCourse && <AddCourse />}
         {showAnalytics && <Analytics />}

@@ -34,9 +34,9 @@ const CourseDetails = ({ id, titre, chapters }) => {
               Take Quiz
             </Button>
           </Link>
-          <Link href={{ pathname: "/interactiveqanda", query: { id: id } }}>
+          <Link href={{ pathname: "/assignment", query: { id: id } }}>
             <Button size="sm" variant="outline">
-              Start interactive Q&A
+              Get assignment
             </Button>
           </Link>
         </div>

@@ -25,3 +25,21 @@ export async function signup(SignupData) {
   }
   return response;
 }
+
+export async function getUser(email) {
+  const response = await fetch(
+    `http://localhost:8089/pfe/getUserByEmail/${email}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to login");
+  }
+
+  return response.json();
+}

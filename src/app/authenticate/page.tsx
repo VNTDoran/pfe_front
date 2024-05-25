@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login } from "@/services/authService";
+import { getUser, login } from "@/services/authService";
 import { signup } from "@/services/authService";
 import { setSession, logout } from "@/services/sessionService";
 
@@ -23,19 +23,25 @@ export default function Auth() {
       if (mode === "login") {
         const response = await login({ email, password });
         if (response.ok) {
+          const user = await getUser(email);
+          console.log(user);
           setSession(email);
+          if (user.role === "ROLE_USER") {
+            router.push("/dashboard");
+          } else {
+            router.push("/admindashboard");
+          }
         } else {
           setError(await response.text());
         }
       } else {
         const response = await signup({ email, password });
         if (response.ok) {
+          router.push("/");
         } else {
           setError(await response.text());
         }
       }
-
-      router.push("/dashboard");
     } catch (error) {
       setError("An error occurred");
     }
