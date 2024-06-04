@@ -19,13 +19,25 @@ import {
   getAssignments,
   rejectAssignment,
 } from "@/services/courseService";
+import {
+  getUsers,
+  deleteUser,
+  promoteUser,
+  downgradeUser,
+} from "@/services/userService";
 
 export default function Admin() {
   const [assignments, setAssignments] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [view, setView] = useState("assignments"); // "assignments" or "users"
 
   useEffect(() => {
-    fetchAssignments();
-  }, []);
+    if (view === "assignments") {
+      fetchAssignments();
+    } else if (view === "users") {
+      fetchUsers();
+    }
+  }, [view]);
 
   const fetchAssignments = async () => {
     try {
@@ -37,6 +49,19 @@ export default function Admin() {
       setAssignments(data);
     } catch (error) {
       console.error("Error fetching assignments:", error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await getUsers();
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
     }
   };
 
@@ -67,6 +92,24 @@ export default function Admin() {
       .catch((error) => console.error("Error downloading file:", error));
   };
 
+  const handleDeleteUser = async (userId) => {
+    await deleteUser(userId);
+    alert("Deleted user with ID:" + userId);
+    fetchUsers();
+  };
+
+  const handlePromoteUser = async (userId) => {
+    await promoteUser(userId);
+    alert("Promoted user with ID:" + userId);
+    fetchUsers();
+  };
+
+  const handleDowngradeUser = async (userId) => {
+    await downgradeUser(userId);
+    alert("Downgraded user with ID:" + userId);
+    fetchUsers();
+  };
+
   return (
     <div className="flex flex-col w-full min-h-screen">
       <header className="flex items-center h-16 px-4 border-b shrink-0 md:px-6">
@@ -78,18 +121,22 @@ export default function Admin() {
           <span>Admin Dashboard</span>
         </Link>
         <nav className="hidden font-medium sm:flex flex-row items-center gap-5 text-sm lg:gap-6">
-          {/* <Link
-            className="text-gray-500 dark:text-gray-400"
-            href="admindashboard"
+          <button
+            className={`text-gray-500 dark:text-gray-400 ${
+              view === "assignments" ? "font-bold" : ""
+            }`}
+            onClick={() => setView("assignments")}
           >
-            Dashboard
-          </Link>
-          <Link className="text-gray-500 dark:text-gray-400" href="users">
-            Users
-          </Link> */}
-          <Link className="font-bold" href="#">
             Assignments
-          </Link>
+          </button>
+          <button
+            className={`text-gray-500 dark:text-gray-400 ${
+              view === "users" ? "font-bold" : ""
+            }`}
+            onClick={() => setView("users")}
+          >
+            Users
+          </button>
         </nav>
         <div className="flex items-center w-full gap-4 md:ml-auto md:gap-2 lg:gap-4">
           <form className="flex-1 ml-auto sm:flex-initial"></form>
@@ -98,61 +145,136 @@ export default function Admin() {
       </header>
       <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] bg-gray-100/40 flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10 dark:bg-gray-800/40">
         <div className="max-w-6xl w-full mx-auto grid gap-2">
-          <div className="flex items-center justify-between">
-            <h1 className="font-semibold text-3xl">Assignments</h1>
-            <div className="flex items-center text-sm gap-2">
-              <div className="text-gray-500 flex items-center gap-2 dark:text-gray-400">
-                <span className="inline-block w-2 h-2 bg-[#09CE6B] rounded-full animate-ping duration-[5000]" />
-                {assignments.length} assignments
+          {view === "assignments" ? (
+            <>
+              <div className="flex items-center justify-between">
+                <h1 className="font-semibold text-3xl">Assignments</h1>
+                <div className="flex items-center text-sm gap-2">
+                  <div className="text-gray-500 flex items-center gap-2 dark:text-gray-400">
+                    <span className="inline-block w-2 h-2 bg-[#09CE6B] rounded-full animate-ping duration-[5000]" />
+                    {assignments.length} assignments
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <Card className="p-0 overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Assignment id</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>File</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {assignments.map((assignment, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{assignment.id}</TableCell>
-                    <TableCell>{assignment.content}</TableCell>
-                    <TableCell>{assignment.file_path}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          disabled={assignment.file_path != null ? false : true}
-                          onClick={() => handleAccept(assignment.id)}
-                          variant="outline"
-                        >
-                          Accept
-                        </Button>
-                        <Button
-                          disabled={assignment.file_path != null ? false : true}
-                          onClick={() => handleReject(assignment.id)}
-                          variant="outline"
-                        >
-                          Reject
-                        </Button>
-                        <Button
-                          disabled={assignment.file_path != null ? false : true}
-                          onClick={() => handleDownload(assignment.file_path)}
-                          variant="outline"
-                        >
-                          Download
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Card>
+              <Card className="p-0 overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Assignment id</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead>File</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {assignments.map((assignment, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{assignment.id}</TableCell>
+                        <TableCell>{assignment.content}</TableCell>
+                        <TableCell>{assignment.file_path}</TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button
+                              disabled={
+                                assignment.file_path != null ? false : true
+                              }
+                              onClick={() => handleAccept(assignment.id)}
+                              variant="outline"
+                            >
+                              Accept
+                            </Button>
+                            <Button
+                              disabled={
+                                assignment.file_path != null ? false : true
+                              }
+                              onClick={() => handleReject(assignment.id)}
+                              variant="outline"
+                            >
+                              Reject
+                            </Button>
+                            <Button
+                              disabled={
+                                assignment.file_path != null ? false : true
+                              }
+                              onClick={() =>
+                                handleDownload(assignment.file_path)
+                              }
+                              variant="outline"
+                            >
+                              Download
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Card>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-between">
+                <h1 className="font-semibold text-3xl">Users</h1>
+                <div className="flex items-center text-sm gap-2">
+                  <div className="text-gray-500 flex items-center gap-2 dark:text-gray-400">
+                    <span className="inline-block w-2 h-2 bg-[#09CE6B] rounded-full animate-ping duration-[5000]" />
+                    {users.length} users
+                  </div>
+                </div>
+              </div>
+              <Card className="p-0 overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User id</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {users.map((user, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{user.id}</TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>
+                          {user.role === "ROLE_ADMIN" ? "ADMIN" : "User"}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            {user.role === "ROLE_USER" ? (
+                              <Button
+                                onClick={() => handlePromoteUser(user.id)}
+                                variant="outline"
+                                className="bg-green-500 text-white"
+                              >
+                                Promote
+                              </Button>
+                            ) : (
+                              <Button
+                                onClick={() => handleDowngradeUser(user.id)}
+                                variant="outline"
+                                className="bg-yellow-500 text-white"
+                              >
+                                Downgrade
+                              </Button>
+                            )}
+                            <Button
+                              onClick={() => handleDeleteUser(user.id)}
+                              variant="outline"
+                              className="bg-red-500 text-white"
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Card>
+            </>
+          )}
         </div>
       </main>
     </div>
