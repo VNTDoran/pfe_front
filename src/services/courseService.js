@@ -63,6 +63,22 @@ export async function fetchQuizId(id) {
   return response;
 }
 
+export async function fetchQstId(id) {
+  const response = await fetch(
+    `http://localhost:8089/pfe/getQdtss/idTraining/${id}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch course");
+  }
+  return response;
+}
+
 export async function fetchAssignment(id) {
   const response = await fetch(
     `http://localhost:8089/pfe/getAssignment/idTraining/${id}`,
